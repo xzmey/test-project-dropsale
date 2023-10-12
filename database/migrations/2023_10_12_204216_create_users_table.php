@@ -11,7 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::connection("mysql::read")->create('users', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('first_name')->index();
+            $table->string('last_name')->index();
+            $table->string('email')->unique();
+            $table->smallInteger('age');
+        });
+
+        Schema::connection("mysql::write")->create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('first_name')->index();
             $table->string('last_name')->index();
@@ -25,6 +33,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::connection("mysql.read")->dropIfExists('users');
+        Schema::connection("mysql.write")->dropIfExists('users');
     }
 };
