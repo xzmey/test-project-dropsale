@@ -1,18 +1,45 @@
 version: "3.7"
 
 services:
-
-  mysql:
+  mysql-master1:
     image: mysql:latest
-    container_name: test-project-db
+    container_name: mysql-master1
+    restart: unless-stopped
+    volumes:
+        - ./master1/my.cnf:/etc/mysql/my.cnf
+        - ./master1/data:/var/lib/mysql
     environment:
         - MYSQL_DATABASE=mydb
         - MYSQL_ROOT_PASSWORD=pass
-    restart: always
+    networks:
+        test-project:
+            aliases:
+                - mysql
+
+  mysql-master2:
+    image: mysql:latest
+    container_name: mysql-master2
+    restart: unless-stopped
+    volumes:
+        - ./master2/my.cnf:/etc/mysql/my.cnf
+        - ./master2/data:/var/lib/mysql
+    environment:
+        - MYSQL_DATABASE=mydb
+        - MYSQL_ROOT_PASSWORD=pass
+    networks:
+        test-project:
+            aliases:
+                - mysql
+
+  lb:
+    image: haproxytech/haproxy-ubuntu:latest
+    container_name: haproxy
+    restart: unless-stopped
     ports:
+      - "2999:2999"
       - "3306:3306"
     volumes:
-      - ./../data/mysql:/var/lib/mysql
+      - ./haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
     networks:
       - test-project
 
