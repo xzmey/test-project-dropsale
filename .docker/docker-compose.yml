@@ -101,6 +101,17 @@ services:
     networks:
       - test-project
 
+  redis:
+    build: ./redis
+    container_name: test-project-redis
+    restart: unless-stopped
+    volumes:
+      - ./redis/data:/data
+    ports:
+      - "6378:6378"
+    networks:
+      - test-project
+
 networks:
  test-project:
     driver: bridge
