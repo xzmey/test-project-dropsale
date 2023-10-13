@@ -1,45 +1,37 @@
 version: "3.7"
 
 services:
-  mysql-master1:
+  mysql-master:
     image: mysql:latest
-    container_name: mysql-master1
-    restart: unless-stopped
-    volumes:
-        - ./master1/my.cnf:/etc/mysql/my.cnf
-        - ./master1/data:/var/lib/mysql
+    container_name: test-project-mysql-master
     environment:
-        - MYSQL_DATABASE=mydb
-        - MYSQL_ROOT_PASSWORD=pass
-    networks:
-        test-project:
-            aliases:
-                - mysql
-
-  mysql-master2:
-    image: mysql:latest
-    container_name: mysql-master2
-    restart: unless-stopped
-    volumes:
-        - ./master2/my.cnf:/etc/mysql/my.cnf
-        - ./master2/data:/var/lib/mysql
-    environment:
-        - MYSQL_DATABASE=mydb
-        - MYSQL_ROOT_PASSWORD=pass
-    networks:
-        test-project:
-            aliases:
-                - mysql
-
-  lb:
-    image: haproxytech/haproxy-ubuntu:latest
-    container_name: haproxy
-    restart: unless-stopped
+      - MYSQL_DATABASE=mydb
+      - MYSQL_ROOT_PASSWORD=pass
+    restart: "no"
     ports:
-      - "2999:2999"
-      - "3306:3306"
+      - "4406:3306"
     volumes:
-      - ./haproxy/haproxy.cfg:/etc/haproxy/haproxy.cfg
+      - ./master/master.sql:/docker-entrypoint-initdb.d/start.sql
+      - ./master/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+      - ./master/data:/var/lib/mysql
+    networks:
+      - test-project
+
+  mysql-slave:
+    image: mysql:latest
+    container_name: test-project-mysql-slave
+    restart: "no"
+    environment:
+      - MYSQL_DATABASE=mydb
+      - MYSQL_ROOT_PASSWORD=pass
+    ports:
+      - "5506:3306"
+    depends_on:
+      - mysql-master
+    volumes:
+      - ./slave/slave.sql:/docker-entrypoint-initdb.d/start.sql
+      - ./slave/conf/mysql.conf.cnf:/etc/mysql/conf.d/mysql.conf.cnf
+      - ./slave/data:/var/lib/mysql
     networks:
       - test-project
 
