@@ -18,4 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('test', \App\Http\Controllers\TestController::class);
+Route::get('import', \App\TestTask\Http\Controllers\ImportController::class);

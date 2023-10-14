@@ -1,9 +1,28 @@
 <?php
 
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
+
+if (!function_exists('streamChannel')) {
+  function streamChannel(string $format, string $stream)
+  {
+    return [
+      'driver' => 'monolog',
+      'formatter' => LineFormatter::class,
+      'formatter_with' => [
+        'format' => $format,
+        'dateFormat' => 'Y-m-d H:i:s',
+      ],
+      'handler' => StreamHandler::class,
+      'with'    => [
+        'stream' => $stream,
+      ],
+    ];
+  }
+}
 
 return [
 
@@ -126,6 +145,17 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'test-task' => [
+          'driver' => 'stack',
+          'channels' => ['test-task-log'],
+          'ignore_exceptions' => false,
+        ],
+
+        'test-task-log' => streamChannel(
+          "[%datetime%] %message%\n",
+          storage_path('logs/test-task.log')
+        ),
     ],
 
 ];

@@ -47,4 +47,9 @@ docker-compose up -d --no-deps --build [container_name]
 ```
 docker-compose exec -u 0 [container_name] bash -c  'command'
 ```
+## Возможные проблемы
 
+### Нехватает прав
+Выдаем права на смонтированную папку(это нужно делать внутри контейнера)
+```
+chown -R 1000:1000 /var/www
