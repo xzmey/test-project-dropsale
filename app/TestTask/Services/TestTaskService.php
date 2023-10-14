@@ -9,7 +9,7 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class TestTaskService
 {
-    private int $affectedRows = 0;
+    private int $affectedRows;
 
     #[ArrayShape(['total' => "int", 'inserted' => "int", 'updated' => "int"])] public function resolve(array $rows): array
     {
