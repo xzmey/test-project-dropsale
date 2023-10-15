@@ -101,31 +101,6 @@ services:
     networks:
       - test-project
 
-  redis:
-    build: ./redis
-    container_name: test-project-redis
-    restart: unless-stopped
-    volumes:
-      - ./redis/data:/data
-    ports:
-      - "6378:6379"
-    networks:
-      - test-project
-
-  rabbitmq:
-    build: ./rabbitmq
-    container_name: test-project-rabbitmq
-    privileged: true
-    hostname: test-project-rabbitmq
-    volumes:
-      - ./rabbitmq/data:/var/lib/rabbitmq
-      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./rabbitmq/management_agent.disable_metrics_collector.conf:/etc/rabbitmq/conf.d/management_agent.disable_metrics_collector.conf
-    ports:
-      - "5673:5672"
-      - "15673:15672"
-    networks:
-      - test-project
 networks:
  test-project:
     driver: bridge
